@@ -22,9 +22,9 @@ def admin_user():
             if choice >= 1 and choice <= 6:
                 admin_choice(choice)
             else:
-                print("Invalid Choice! Try Again")
+                print("Invalid Choice! Please enter a number between 1 and 6.")
         except ValueError:
-            print("Invalid input. Please enter a number between 1 and 6.")
+            print("Invalid input. Please enter numeric value")
             continue
         
 def customer_user():
@@ -42,9 +42,9 @@ def customer_user():
             if choice >= 1 and choice <= 5:
                 user_choice(choice)
             else:
-                print("Invalid Choice! Try Again")
+                print("Invalid Choice! Please enter a number between 1 and 5.")
         except ValueError:
-            print("Invalid input. Please enter a number between 1 and 5.")
+            print("Invalid input. Please enter numeric value")
             continue
 
 
@@ -52,35 +52,35 @@ def admin_choice(choice):
     if choice == 1:
         create_account()
         admin_user()
-    if choice == 2:
+    elif choice == 2:
         print("h")
         admin_user()
-    if choice == 3:
+    elif choice == 3:
         print("h")
         admin_user()
-    if choice == 4:
+    elif choice == 4:
         print("h")
         admin_user()
-    if choice == 5:
+    elif choice == 5:
         print("h")
         admin_user()
-    if choice == 6:
+    elif choice == 6:
         exit()
 
 def user_choice(choice):
     if choice == 1:
         print("h")
         customer_user()
-    if choice == 2:
+    elif choice == 2:
         print("h")
         customer_user()
-    if choice == 3:
+    elif choice == 3:
         print("h")
         customer_user()
-    if choice == 4:
+    elif choice == 4:
         print("h")
         customer_user()
-    if choice == 5:
+    elif choice == 5:
         exit()
 
 def account_data_handle(acc_number,cus_id,acc_type,date_stamp):
