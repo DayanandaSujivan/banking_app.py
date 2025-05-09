@@ -155,49 +155,36 @@ def create_account():
     
 
 def create_account_number():
-    file_path = Path('Acc_No.txt')
+    file_path = Path('Account.txt')
 
     if file_path.exists():
-        file = open('Acc_No.txt', 'r')
+        file = open('Account.txt', 'r')
+        last = []
         for line in file:
-            num = line.strip()
-            lists = num.split("_")
-            x = int(lists[1])
-            lists[1] = x+1
-            num = f"{lists[0]}_{lists[1]}"
+            last = line
+            acc_no = (last.strip().split()[0])
+            code, number = acc_no.split("_")
+            new_acc_no = (f"{code}_{(int(number) + 1):04d}")
         file.close()
-
-        file = open('Acc_No.txt', 'w')
-        file.write(f"{num}")
-        file.close()
-        return num
+        return new_acc_no
     else:
-        file = open('Acc_No.txt', 'w')
-        file.write("A_1")
-        file.close()
-        return "A_1"
+        return "ACN_0001"
+    
 def create_customer_id():
-    file_path = Path('Cus_ID.txt')
+    file_path = Path('Customer.txt')
 
     if file_path.exists():
-        file = open('Cus_ID.txt', 'r')
+        file = open('Customer.txt', 'r')
+        last = []
         for line in file:
-            num = line
-            lists = num.split("_")
-            x = int(lists[1])
-            lists[1] = x+1
-            num = f"{lists[0]}_{lists[1]}"
+            last = line
+            cus_no = (last.strip().split()[0])
+            code, number = cus_no.split("_")
+            new_cus_no = (f"{code}_{(int(number) + 1):04d}")
         file.close()
-
-        file = open('Cus_ID.txt', 'w')
-        file.write(f"{num}")
-        file.close()
-        return num
+        return new_cus_no
     else:
-        file = open('Cus_ID.txt', 'w')
-        file.write("C_1")
-        file.close()
-        return "C_1"
+        return "CUS_0001"
         
 
 #***************Main Function****************
