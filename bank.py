@@ -85,8 +85,6 @@ def user_choice(choice):
 
 def account_data_handle(acc_number,cus_id,acc_type,date_stamp):
 
-    from pathlib import Path
-
     file_path = Path('Account.txt')
     dict = {}
     if file_path.exists():
@@ -113,8 +111,6 @@ def account_data_handle(acc_number,cus_id,acc_type,date_stamp):
 
 def customer_data_handle(cus_id,name,dob,NIC,phone,address):
 
-    from pathlib import Path
-
     file_path = Path('Customer.txt')
     dict = {}
     if file_path.exists():
@@ -123,9 +119,11 @@ def customer_data_handle(cus_id,name,dob,NIC,phone,address):
             values = line.strip().split()
             key = values[0]
             dict[key] = values[1:]
+            if values[3] == NIC:
+                nic_exists = True
         file.close()
-
-        dict[cus_id] = [name,dob,NIC,phone,address] 
+        if not nic_exists:
+            dict[cus_id] = [name,dob,NIC,phone,address] 
 
         file = open('Customer.txt', 'w')
         for key, value in dict.items():
