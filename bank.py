@@ -83,57 +83,70 @@ def user_choice(choice):
     elif choice == 5:
         exit()
 
-def account_data_handle(acc_number,cus_id,acc_type,date_stamp):
-
+def account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC):
+    nic_exists = False
     file_path = Path('Account.txt')
-    dict = {}
+    dict_acc = {}
+    dict_cus = {}
     if file_path.exists():
         file = open('Account.txt', 'r')
         for line in file:
             values = line.strip().split()
             key = values[0]
-            dict[key] = values[1:]
+            dict_acc[key] = values[1:]
         file.close()
-
-        dict[acc_number] = [cus_id, acc_type, str(date_stamp)] 
+        file = open('Customer.txt', 'r')
+        for line in file:
+            values = line.strip().split()
+            key = values[0]
+            dict_cus[key] = values[1:]
+            if values[2] == NIC:
+                nic_exists = True
+                existing_cus_id = values[0]
+                break
+        file.close()
+        if not nic_exists:
+            dict_acc[acc_number] = [cus_id, acc_type, str(date_stamp)] 
+        else:
+            dict_acc[acc_number] = [existing_cus_id, acc_type, str(date_stamp)] 
 
         file = open('Account.txt', 'w')
-        for key, value in dict.items():
+        for key, value in dict_acc.items():
             file.write(f"{key}\t{' '.join(value)}\n")
         file.close()
 
     else:
-        dict[acc_number] = [cus_id, acc_type, str(date_stamp)]
+        dict_acc[acc_number] = [cus_id, acc_type, str(date_stamp)]
         file = open('Account.txt', 'w')
-        for key, value in dict.items():
+        for key, value in dict_acc.items():
             file.write(f"{key}\t{' '.join(value)}\n")
         file.close()
 
 def customer_data_handle(cus_id,name,dob,NIC,phone,address):
-
+    nic_exists = False
     file_path = Path('Customer.txt')
-    dict = {}
+    dict_cus = {}
     if file_path.exists():
         file = open('Customer.txt', 'r')
         for line in file:
             values = line.strip().split()
             key = values[0]
-            dict[key] = values[1:]
-            if values[3] == NIC:
+            dict_cus[key] = values[1:]
+            if values[2] == NIC:
                 nic_exists = True
         file.close()
         if not nic_exists:
-            dict[cus_id] = [name,dob,NIC,phone,address] 
+            dict_cus[cus_id] = [name,dob,NIC,phone,address] 
 
         file = open('Customer.txt', 'w')
-        for key, value in dict.items():
+        for key, value in dict_cus.items():
             file.write(f"{key}\t{' '.join(value)}\n")
         file.close()
 
     else:
-        dict[cus_id] = [name,dob,NIC,phone,address] 
+        dict_cus[cus_id] = [name,dob,NIC,phone,address] 
         file = open('Customer.txt', 'w')
-        for key, value in dict.items():
+        for key, value in dict_cus.items():
             file.write(f"{key}\t{' '.join(value)}\n")
         file.close()
 
@@ -148,7 +161,7 @@ def create_account():
     acc_number = create_account_number()
     acc_type = input("Enter Account Type[Current, Saving, Fixed]: ")
     date_stamp = datetime.datetime.now()
-    account_data_handle(acc_number,cus_id,acc_type,date_stamp)
+    account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC)
     customer_data_handle(cus_id,name,dob,NIC,phone,address)
     
 
