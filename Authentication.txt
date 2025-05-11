@@ -1,3 +1,3 @@
-CUS_0001	d.sujivan	CUS_0001_5079
-CUS_0002	s.ajantha	CUS_0002_6732
-CUS_0003	n.nathistan	CUS_0003_7056
+CUS_0001	d.sujivan	CUS_0001_4937
+CUS_0002	s.ajantha	CUS_0002_3291
+CUS_0003	n.nathistan	CUS_0003_5592

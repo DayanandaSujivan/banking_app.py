@@ -135,9 +135,11 @@ def account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC):
                 break
         file.close()
         if nic_exists == True:
-            dict_acc[acc_number] = [existing_cus_id, acc_type, str(date_stamp)] 
+            dict_acc[acc_number] = [existing_cus_id, acc_type, str(date_stamp)]
+            transection(acc_number,existing_cus_id,status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp)) 
         else:
-            dict_acc[acc_number] = [cus_id, acc_type, str(date_stamp)]             
+            dict_acc[acc_number] = [cus_id, acc_type, str(date_stamp)] 
+            transection(acc_number,cus_id,status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp))            
 
         file = open('Account.txt', 'w')
         for key, value in dict_acc.items():
@@ -150,6 +152,8 @@ def account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC):
         for key, value in dict_acc.items():
             file.write(f"{key}\t{' '.join(value)}\n")
         file.close()
+        transection(acc_number,cus_id,status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp))
+        
 
 def customer_data_handle(cus_id,name,dob,NIC,phone,address,user_name,password):
     nic_exists = False
@@ -240,6 +244,14 @@ def create_customer_id():
         return new_cus_no
     else:
         return "CUS_0001"
+    
+def transection(acc_number,cus_id,status,amount,total_amount,date_stamp):
+    dict_trans = {}
+    dict_trans[acc_number] = [cus_id,status,amount,total_amount,date_stamp] 
+    file = open('Transection.txt', 'a')
+    for key, value in dict_trans.items():
+        file.write(f"{key}\t{' '.join(value)}\n")
+    file.close()
         
 
 #***************Main Function****************
