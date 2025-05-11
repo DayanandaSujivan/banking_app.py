@@ -4,10 +4,26 @@ import random
 
 
 def user_authorization(user_name, password):
+    dict = {}
     if user_name == 'Admin' and password == 'Admin123':
         admin_user()
     else:
-        customer_user()
+        file_path = Path('Authentication.txt')
+        if file_path.exists():
+            file = open('Authentication.txt','r')
+            for line in file:
+                values = line.strip().split()
+                key = values[0]
+                dict[key] = values[1:]
+                if user_name == values[1] and password == values[2] :
+                    cus_id = values[0]
+            file.close()
+            try:
+                customer_user(cus_id)
+            except UnboundLocalError:
+                print("Please Enter Correct User Name Or Password or Register First!")
+        else:
+            print("Please Enter Correct User Name Or Password or Register First!")
 
 def admin_user():
     while True:
@@ -30,7 +46,17 @@ def admin_user():
             print("Invalid input. Please enter numeric value")
             continue
         
-def customer_user():
+def customer_user(cus_id):
+    dict = {}
+    file = open('Customer.txt','r')
+    for line in file:
+        values = line.strip().split()
+        key = values[0]
+        dict[key] = values[1:]
+        if values[0] == cus_id :
+            name = values[1]
+    file.close()
+    print(f"Welcome! {name}")
     while True:
         print("*******************Menu*************************")
         print("1.Deposit Money")
@@ -156,7 +182,7 @@ def customer_data_handle(cus_id,name,dob,NIC,phone,address,user_name,password):
         user_authentication_credentials(cus_id,user_name,password)
 
 def user_authentication_credentials(cus_id,user_name,password):
-    file = open('Authentication','a')
+    file = open('Authentication.txt','a')
     file.write(f"{cus_id}\t{user_name}\t{password}\n")
     file.close()
 
