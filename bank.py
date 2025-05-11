@@ -1,5 +1,8 @@
-import datetime
 from pathlib import Path
+import datetime
+import random
+
+
 def user_authorization(user_name, password):
     if user_name == 'Admin' and password == 'Admin123':
         admin_user()
@@ -100,15 +103,15 @@ def account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC):
             values = line.strip().split()
             key = values[0]
             dict_cus[key] = values[1:]
-            if values[2] == NIC:
+            if values[3] == NIC:
                 nic_exists = True
                 existing_cus_id = values[0]
                 break
         file.close()
-        if not nic_exists:
-            dict_acc[acc_number] = [cus_id, acc_type, str(date_stamp)] 
-        else:
+        if nic_exists == True:
             dict_acc[acc_number] = [existing_cus_id, acc_type, str(date_stamp)] 
+        else:
+            dict_acc[acc_number] = [cus_id, acc_type, str(date_stamp)]             
 
         file = open('Account.txt', 'w')
         for key, value in dict_acc.items():
@@ -122,7 +125,7 @@ def account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC):
             file.write(f"{key}\t{' '.join(value)}\n")
         file.close()
 
-def customer_data_handle(cus_id,name,dob,NIC,phone,address):
+def customer_data_handle(cus_id,name,dob,NIC,phone,address,user_name,password):
     nic_exists = False
     file_path = Path('Customer.txt')
     dict_cus = {}
@@ -132,12 +135,13 @@ def customer_data_handle(cus_id,name,dob,NIC,phone,address):
             values = line.strip().split()
             key = values[0]
             dict_cus[key] = values[1:]
-            if values[2] == NIC:
+            if values[3] == NIC:
                 nic_exists = True
         file.close()
-        if not nic_exists:
-            dict_cus[cus_id] = [name,dob,NIC,phone,address] 
-
+        print(nic_exists)
+        if nic_exists == False:
+            dict_cus[cus_id] = [name,dob,NIC,phone,address]
+            user_authentication_credentials(cus_id,user_name,password) 
         file = open('Customer.txt', 'w')
         for key, value in dict_cus.items():
             file.write(f"{key}\t{' '.join(value)}\n")
@@ -149,6 +153,12 @@ def customer_data_handle(cus_id,name,dob,NIC,phone,address):
         for key, value in dict_cus.items():
             file.write(f"{key}\t{' '.join(value)}\n")
         file.close()
+        user_authentication_credentials(cus_id,user_name,password)
+
+def user_authentication_credentials(cus_id,user_name,password):
+    file = open('Authentication','a')
+    file.write(f"{cus_id}\t{user_name}\t{password}\n")
+    file.close()
 
 
 def create_account():
@@ -156,14 +166,22 @@ def create_account():
     name = input("Enter Customer Name[eg:J.Jhon]: ")
     dob = input("Enter Customer DOB[eg:2000-01-30]: ")
     NIC = input("Enter Customer NIC[eg:981640954V]: ")
+    NIC = NIC.strip().lower()
     phone = input("Enter Customer Phone Number[eg:0766370052]: ")
     address = input("Enter Customer Address[eg:Jaffna]: ")
     acc_number = create_account_number()
     acc_type = input("Enter Account Type[Current, Saving, Fixed]: ")
     date_stamp = datetime.datetime.now()
+    user_name = name.strip().lower()
+    password = create_user_password(cus_id)
     account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC)
-    customer_data_handle(cus_id,name,dob,NIC,phone,address)
-    
+    customer_data_handle(cus_id,name,dob,NIC,phone,address,user_name,password)
+
+def create_user_password(cus_id):
+
+    num = random.randrange(1000,9999)
+    password = f"{cus_id}_{num}"
+    return password
 
 def create_account_number():
     file_path = Path('Account.txt')
