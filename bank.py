@@ -82,16 +82,20 @@ def admin_choice(choice):
         create_account()
         admin_user()
     elif choice == 2:
-        print("h")
+        cus_id = input("Enter the customer ID to be deposited: ")
+        deposite(cus_id)
         admin_user()
     elif choice == 3:
-        print("h")
+        cus_id = input("Enter the customer ID to withdraw: ")
+        Withdrawal(cus_id)
         admin_user()
     elif choice == 4:
-        print("h")
+        cus_id = input("Enter the customer ID to be balance checked: ")
+        check_balance(cus_id)
         admin_user()
     elif choice == 5:
-        print("h")
+        cus_id = input("Enter the customer ID to be transaction history checked: ")
+        transaction_history(cus_id)
         admin_user()
     elif choice == 6:
         exit()
@@ -107,7 +111,7 @@ def user_choice(choice,cus_id):
         check_balance(cus_id)
         customer_user(cus_id)
     elif choice == 4:
-        print("h")
+        transaction_history(cus_id)
         customer_user(cus_id)
     elif choice == 5:
         exit()
@@ -168,7 +172,6 @@ def customer_data_handle(cus_id,name,dob,NIC,phone,address,user_name,password):
             if values[3] == NIC:
                 nic_exists = True
         file.close()
-        print(nic_exists)
         if nic_exists == False:
             dict_cus[cus_id] = [name,dob,NIC,phone,address]
             user_authentication_credentials(cus_id,user_name,password) 
@@ -255,7 +258,7 @@ def transection(acc_number,cus_id,transferor,status,amount,total_amount,date_sta
 
 def deposite(cus_id):
     try:
-        acc_no = input("Enter the Account Number to be deposite: ")
+        acc_no = input("Enter Your Account Number: ")
         file_path = Path('Account.txt')
         dict_acc = {}
         verify = False
@@ -274,6 +277,9 @@ def deposite(cus_id):
 
         try:
             deposite_amount = float(input("Enter Deposite Amount: "))
+            if deposite_amount <= 0:
+                print("Invalid amount! deposite amount must be greater than zero.")
+                return
         except ValueError:
             print("Invalid input! Please enter a numeric deposit amount.")
             return
@@ -328,6 +334,9 @@ def Withdrawal(cus_id):
         if access == True:
             try:
                 Withdrawal_amount = float(input("Enter Withdrawal Amount: "))
+                if Withdrawal_amount <= 0:
+                    print("Invalid amount! Withdrawal amount must be greater than zero.")
+                    return
                 file_path = Path('Transection.txt')
                 dict_withdra = {}
                 if file_path.exists():
@@ -386,6 +395,29 @@ def check_balance(cus_id):
         print("An unexpected error occurred:", e)
 
 
+def transaction_history(cus_id):
+    try:
+        file_path = Path('Transection.txt')
+        dict_withdra = {}
+        if file_path.exists():
+            try:
+                file = open('Transection.txt', 'r')
+                print(f"Account_No\tCustomer_ID\tTransferor\tStatus\tAmount\tTotal_Amount\tDate&Time")
+                for line in file:
+                    values = line.strip().split()
+                    key = values[0]
+                    dict_withdra[key] = values[1:]
+                    if values[1] == cus_id:
+                        print(f"{values[0]}\t{values[1]}\t{values[2]}\t{values[3]}\t{values[4]}\t{values[5]}\t{values[6]}\t\n")     
+                file.close()
+            except IndexError:
+                print("Transaction data format is incorrect.")
+            except Exception as e:
+                print("An error occurred while reading the transaction file:", e)
+        else:
+            print("Account Not Availabale!")
+    except Exception as e:
+        print("An unexpected error occurred:", e)
 
 
         
