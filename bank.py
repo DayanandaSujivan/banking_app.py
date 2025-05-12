@@ -136,10 +136,10 @@ def account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC):
         file.close()
         if nic_exists == True:
             dict_acc[acc_number] = [existing_cus_id, acc_type, str(date_stamp)]
-            transection(acc_number,existing_cus_id,status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp)) 
+            transection(acc_number,existing_cus_id,transferor = "Admin",status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp)) 
         else:
             dict_acc[acc_number] = [cus_id, acc_type, str(date_stamp)] 
-            transection(acc_number,cus_id,status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp))            
+            transection(acc_number,cus_id,transferor = "Admin",status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp))            
 
         file = open('Account.txt', 'w')
         for key, value in dict_acc.items():
@@ -152,7 +152,7 @@ def account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC):
         for key, value in dict_acc.items():
             file.write(f"{key}\t{' '.join(value)}\n")
         file.close()
-        transection(acc_number,cus_id,status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp))
+        transection(acc_number,cus_id,transferor = "Admin",status = "deposite",amount = "1000",total_amount = "1000",date_stamp = str(date_stamp))
         
 
 def customer_data_handle(cus_id,name,dob,NIC,phone,address,user_name,password):
@@ -245,54 +245,122 @@ def create_customer_id():
     else:
         return "CUS_0001"
     
-def transection(acc_number,cus_id,status,amount,total_amount,date_stamp):
+def transection(acc_number,cus_id,transferor,status,amount,total_amount,date_stamp):
     dict_trans = {}
-    dict_trans[acc_number] = [cus_id,status,amount,total_amount,date_stamp] 
+    dict_trans[acc_number] = [cus_id,transferor,status,amount,total_amount,date_stamp] 
     file = open('Transection.txt', 'a')
     for key, value in dict_trans.items():
         file.write(f"{key}\t{' '.join(value)}\n")
     file.close()
 
 def deposite(cus_id):
-    acc_no = input("Enter Your Account Number: ")
-    deposite_amount = float(input("Enter Deposite Amount: "))
-    file_path = Path('Transection.txt')
-    dict_depo = {}
-    if file_path.exists():
-        file = open('Transection.txt', 'r')
-        for line in file:
-            values = line.strip().split()
-            key = values[0]
-            dict_depo[key] = values[1:]
-            if values[0] == acc_no:
-                total_amount = values[4]        
-        file.close()
-        total_amount = float(total_amount)
-        total_amount += deposite_amount
-        transection(acc_number = acc_no,cus_id = cus_id,status = "deposite",amount = str(deposite_amount),total_amount = str(total_amount),date_stamp = str(datetime.datetime.now()))
+    try:
+        acc_no = input("Enter the Account Number to be deposite: ")
+        file_path = Path('Account.txt')
+        dict_acc = {}
+        verify = False
+        if file_path.exists(): 
+            try:
+                file = open('Account.txt', 'r')
+                for line in file:
+                    values = line.strip().split()
+                    key = values[0]
+                    dict_acc[key] = values[1:]
+                    if values[0] == acc_no and values[1] == cus_id:
+                        verify = True
+                file.close()
+            except Exception as e:
+                print("An error occurred while reading Account.txt:", e)
+
+        try:
+            deposite_amount = float(input("Enter Deposite Amount: "))
+        except ValueError:
+            print("Invalid input! Please enter a numeric deposit amount.")
+            return
+
+        file_path = Path('Transection.txt')
+        dict_depo = {}
+        if file_path.exists():
+            try:
+                file = open('Transection.txt', 'r')
+                total_amount = None
+                for line in file:
+                    values = line.strip().split()
+                    key = values[0]
+                    dict_depo[key] = values[1:]
+                    if values[0] == acc_no:
+                        total_amount = values[5]        
+                file.close()
+                if verify == True:
+                    try:
+                        total_amount = float(total_amount)
+                        total_amount += deposite_amount
+                        transection(acc_number = acc_no, cus_id = cus_id, transferor = cus_id, status = "deposite", amount = str(deposite_amount), total_amount = str(total_amount), date_stamp = str(datetime.datetime.now()))
+                    except Exception as e:
+                        print("An error occurred during transaction:", e)
+                else:
+                    print("Account verification failed.")
+            except IndexError:
+                print("Transaction data format is incorrect.")
+            except ValueError:
+                print("Invalid transaction value. Please check the data.")
+            except Exception as e:
+                print("An error occurred during deposit:", e)
+        else:
+            print("Transaction file not found.")
+    except Exception as e:
+        print("An error occurred:", e)
+
 
 def Withdrawal(cus_id):
-    acc_no = input("Enter Your Account Number: ")
-    Withdrawal_amount = float(input("Enter Withdrawal Amount: "))
-    file_path = Path('Transection.txt')
-    dict_withdra = {}
-    if file_path.exists():
-        file = open('Transection.txt', 'r')
+    try:
+        acc_no = input("Enter Your Account Number: ")
+        dict_withdra = {}
+        file = open('Account.txt', 'r')
+        access = False
         for line in file:
             values = line.strip().split()
             key = values[0]
             dict_withdra[key] = values[1:]
-            if values[0] == acc_no:
-                total_amount = values[4]        
+            if values[0] == acc_no and values[1] == cus_id:
+                access = True                
         file.close()
-        total_amount = float(total_amount)
-        if Withdrawal_amount <= (total_amount - 1000):
-            total_amount -= Withdrawal_amount
-            transection(acc_number = acc_no,cus_id = cus_id,status = "withdrawal",amount = str(Withdrawal_amount),total_amount = str(total_amount),date_stamp = str(datetime.datetime.now()))
+        if access == True:
+            try:
+                Withdrawal_amount = float(input("Enter Withdrawal Amount: "))
+                file_path = Path('Transection.txt')
+                dict_withdra = {}
+                if file_path.exists():
+                    file = open('Transection.txt', 'r')
+                    for line in file:
+                        values = line.strip().split()
+                        key = values[0]
+                        dict_withdra[key] = values[1:]
+                        if values[0] == acc_no:
+                            total_amount = values[5]        
+                    file.close()
+                    total_amount = float(total_amount)
+                    if Withdrawal_amount <= (total_amount - 1000):
+                        total_amount -= Withdrawal_amount
+                        transection(acc_number = acc_no,cus_id = cus_id,transferor = cus_id, status = "withdrawal",amount = str(Withdrawal_amount),total_amount = str(total_amount),date_stamp = str(datetime.datetime.now()))
+                    else:
+                        print("Can't Withdraw! Insufficient amount!")
+                else:
+                    print("You can't withdraw!")
+            except ValueError:
+                print("Invalid input! Please enter a numeric value.")
+            except IndexError:
+                print("Transaction data format is incorrect.")
+            except Exception as e:
+                print("An error occurred during withdrawal:", e)
         else:
-            print("Can't Withdraw! Insufficient amount!")
-    else:
-        print("You can't withdraw!")
+            print("Enter Correct Account Number!")
+    except FileNotFoundError:
+        print("Transaction file not found.")
+    except Exception as e:
+        print("An error occurred:", e)
+
+
 
 
         
