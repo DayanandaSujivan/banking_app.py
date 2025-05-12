@@ -104,7 +104,7 @@ def user_choice(choice,cus_id):
         Withdrawal(cus_id)
         customer_user(cus_id)
     elif choice == 3:
-        print("h")
+        check_balance(cus_id)
         customer_user(cus_id)
     elif choice == 4:
         print("h")
@@ -359,6 +359,31 @@ def Withdrawal(cus_id):
         print("Transaction file not found.")
     except Exception as e:
         print("An error occurred:", e)
+
+def check_balance(cus_id):
+    try:
+        file_path = Path('Transection.txt')
+        dict_withdra = {}
+        balance = None
+        if file_path.exists():
+            try:
+                file = open('Transection.txt', 'r')
+                for line in file:
+                    values = line.strip().split()
+                    key = values[0]
+                    dict_withdra[key] = values[1:]
+                    if values[1] == cus_id:
+                        balance = values[5]        
+                file.close()
+                print(f"Your balance is: {balance}")
+            except IndexError:
+                print("Transaction data format is incorrect.")
+            except Exception as e:
+                print("An error occurred while reading the transaction file:", e)
+        else:
+            print("Account Not Availabale!")
+    except Exception as e:
+        print("An unexpected error occurred:", e)
 
 
 
