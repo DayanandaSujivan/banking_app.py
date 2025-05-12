@@ -69,7 +69,7 @@ def customer_user(cus_id):
         try:
             choice = int(input("Enter your choice(1-5): "))
             if choice >= 1 and choice <= 5:
-                user_choice(choice)
+                user_choice(choice,cus_id)
             else:
                 print("Invalid Choice! Please enter a number between 1 and 5.")
         except ValueError:
@@ -96,19 +96,19 @@ def admin_choice(choice):
     elif choice == 6:
         exit()
 
-def user_choice(choice):
+def user_choice(choice,cus_id):
     if choice == 1:
-        print("h")
-        customer_user()
+        deposite(cus_id)
+        customer_user(cus_id)
     elif choice == 2:
-        print("h")
-        customer_user()
+        Withdrawal(cus_id)
+        customer_user(cus_id)
     elif choice == 3:
         print("h")
-        customer_user()
+        customer_user(cus_id)
     elif choice == 4:
         print("h")
-        customer_user()
+        customer_user(cus_id)
     elif choice == 5:
         exit()
 
@@ -117,7 +117,7 @@ def account_data_handle(acc_number,cus_id,acc_type,date_stamp,NIC):
     file_path = Path('Account.txt')
     dict_acc = {}
     dict_cus = {}
-    if file_path.exists():
+    if file_path.exists(): 
         file = open('Account.txt', 'r')
         for line in file:
             values = line.strip().split()
@@ -252,6 +252,49 @@ def transection(acc_number,cus_id,status,amount,total_amount,date_stamp):
     for key, value in dict_trans.items():
         file.write(f"{key}\t{' '.join(value)}\n")
     file.close()
+
+def deposite(cus_id):
+    acc_no = input("Enter Your Account Number: ")
+    deposite_amount = float(input("Enter Deposite Amount: "))
+    file_path = Path('Transection.txt')
+    dict_depo = {}
+    if file_path.exists():
+        file = open('Transection.txt', 'r')
+        for line in file:
+            values = line.strip().split()
+            key = values[0]
+            dict_depo[key] = values[1:]
+            if values[0] == acc_no:
+                total_amount = values[4]        
+        file.close()
+        total_amount = float(total_amount)
+        total_amount += deposite_amount
+        transection(acc_number = acc_no,cus_id = cus_id,status = "deposite",amount = str(deposite_amount),total_amount = str(total_amount),date_stamp = str(datetime.datetime.now()))
+
+def Withdrawal(cus_id):
+    acc_no = input("Enter Your Account Number: ")
+    Withdrawal_amount = float(input("Enter Withdrawal Amount: "))
+    file_path = Path('Transection.txt')
+    dict_withdra = {}
+    if file_path.exists():
+        file = open('Transection.txt', 'r')
+        for line in file:
+            values = line.strip().split()
+            key = values[0]
+            dict_withdra[key] = values[1:]
+            if values[0] == acc_no:
+                total_amount = values[4]        
+        file.close()
+        total_amount = float(total_amount)
+        if Withdrawal_amount <= (total_amount - 1000):
+            total_amount -= Withdrawal_amount
+            transection(acc_number = acc_no,cus_id = cus_id,status = "withdrawal",amount = str(Withdrawal_amount),total_amount = str(total_amount),date_stamp = str(datetime.datetime.now()))
+        else:
+            print("Can't Withdraw! Insufficient amount!")
+    else:
+        print("You can't withdraw!")
+
+
         
 
 #***************Main Function****************
