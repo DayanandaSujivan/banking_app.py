@@ -33,15 +33,18 @@ def admin_user():
         print("3.Withdraw Money")
         print("4.Check Balance")
         print("5.Transaction  History")
-        print("6.Exit ")
+        print("6.Display Account Count")
+        print("7.Count Total Number of Users")
+        print("8. Delete User")
+        print("9.Exit ")
         print("************************************************")
 
         try:
-            choice = int(input("Enter your choice(1-6): "))
-            if choice >= 1 and choice <= 6:
+            choice = int(input("Enter your choice(1-9): "))
+            if choice >= 1 and choice <= 9:
                 admin_choice(choice)
             else:
-                print("Invalid Choice! Please enter a number between 1 and 6.")
+                print("Invalid Choice! Please enter a number between 1 and 9.")
         except ValueError:
             print("Invalid input. Please enter numeric value")
             continue
@@ -98,6 +101,16 @@ def admin_choice(choice):
         transaction_history(cus_id)
         admin_user()
     elif choice == 6:
+        display_account_count()
+        admin_user()
+    elif choice == 7:
+        display_total_users()
+        admin_user()
+    elif choice == 8:
+        cus_id = input("Enter the customer ID to be deleted: ")
+        delete_customer_account (cus_id)
+        admin_user()
+    elif choice == 9:
         exit()
 
 def user_choice(choice,cus_id):
@@ -419,8 +432,111 @@ def transaction_history(cus_id):
     except Exception as e:
         print("An unexpected error occurred:", e)
 
+# Exam : 03 -> Question : 01
+def display_account_count():
+    dict_acc_view = {}
+    total_account = 0
+    file_path = Path('Account.txt')
+    if file_path.exists():
+        file = open('Account.txt','r')
+        for lines in file:
+            values = lines.strip().split()
+            key = values[0]
+            dict_acc_view[key] = values[1:]
+        file.close()
+        total_account = len(dict_acc_view)
+        print(f"Total Number of account in our bank is: {total_account}")
+    else:
+        print("No Account exists!")
 
-        
+# Exam : 03 -> Question : 02
+def display_total_users():
+    dict_users_view = {}
+    total_users = 0
+    file_path = Path('Authentication.txt')
+    if file_path.exists():
+        file = open('Authentication.txt','r')
+        for lines in file:
+            values = lines.strip().split()
+            key = values[0]
+            dict_users_view[key] = values[1:]
+        file.close()
+        total_users = int(len(dict_users_view))
+        total_users += 1
+        print(f"Total Number of Users in our bank is: {total_users}")
+    else:
+        print("No Users Exists!")
+# Exam : 03 -> Question : 03
+
+def delete_customer_account (cus_id):
+    #User Delete
+    dict_users_delete = {}
+    file_path = Path('Authentication.txt')
+    if file_path.exists():
+        file = open('Authentication.txt','r')
+        for lines in file:
+            values = lines.strip().split()
+            key = values[0]
+            dict_users_delete[key] = values[1:]
+        file.close()
+        dict_users_delete.pop(cus_id)
+        file = open('Authentication.txt', 'w')
+        for key, value in dict_users_delete.items():
+            file.write(f"{key}\t{' '.join(value)}\n")
+        file.close()
+    else:
+        print("Authentication.txt not exists!")
+    # Delete Customer
+    dict_customer_delete = {}
+    file_path = Path('Customer.txt')
+    if file_path.exists():
+        file = open('Customer.txt','r')
+        for lines in file:
+            values = lines.strip().split()
+            key = values[0]
+            dict_customer_delete[key] = values[1:]
+        file.close()
+        dict_customer_delete.pop(cus_id)
+        file = open('Customer.txt', 'w')
+        for key, value in dict_customer_delete.items():
+            file.write(f"{key}\t{' '.join(value)}\n")
+        file.close() 
+    else:
+        print("Customer.txt not exists!")
+    # Delete Account
+    dict_account_delete = {}
+    file_path = Path('Account.txt')
+    if file_path.exists():
+        file = open('Account.txt','r')
+        for lines in file:
+            values = lines.strip().split()
+            key = values[0]
+            dict_account_delete[key] = values[1:]
+        file.close()
+        dict_account_delete.pop(cus_id)
+        file = open('Account.txt', 'w')
+        for key, value in dict_account_delete.items():
+            file.write(f"{key}\t{' '.join(value)}\n")
+        file.close()
+    else:
+        print("Account.txt not exists!")
+    # Delete Transection
+    dict_transection_delete = {}
+    file_path = Path('Transection.txt')
+    if file_path.exists():
+        file = open('Transection.txt','r')
+        for lines in file:
+            values = lines.strip().split()
+            key = values[0]
+            dict_transection_delete[key] = values[1:]
+        file.close()
+        dict_transection_delete.pop(cus_id)
+        file = open('Transection.txt', 'w')
+        for key, value in dict_transection_delete.items():
+            file.write(f"{key}\t{' '.join(value)}\n")
+        file.close()
+    else:
+        print("Transection.txt not exists!")
 
 #***************Main Function****************
 user_name = input("Enter user name: ")
